@@ -9,7 +9,7 @@
 
 DROP DATABASE IF EXISTS hostel_management;
 CREATE DATABASE hostel_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE hostel_management;
+USE defaultdb;
 
 -- ---------------------------------------------------------------------
 -- Table 1: Warden
