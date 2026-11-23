@@ -640,13 +640,9 @@ AND s1.student_id < s2.student_id;
 SELECT c.complaint_id, s.name AS student_name,
        h.hostel_name, r.room_number,
        c.category, c.priority, c.status
-FROM Complaint c
-INNER JOIN Student s ON c.student_id = s.student_id
-LEFT JOIN Room r ON c.room_id = r.room_id
-<<<<<<< Updated upstream
-LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
+FROM complaint c
+INNER JOIN student s ON c.student_id = s.student_id
+LEFT JOIN room r ON c.room_id = r.room_id
+LEFT JOIN hostel h ON r.hostel_id = h.hostel_id;
 
-select * from attendance_register;
-=======
-LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
->>>>>>> Stashed changes
+SELECT * FROM attendance_register;
