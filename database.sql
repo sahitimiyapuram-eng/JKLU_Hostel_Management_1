@@ -475,15 +475,15 @@ INSERT INTO Mess_Weekly_Menu (day_of_week, meal_type, menu_items, meal_timing, i
 INSERT INTO staff
 (name, role, phone, email, shift_timing, hostel_id, salary)
 SELECT
-'Neelam',
+'Rajesh',
 'Security Guard',
 '9829012345',
-'guard.gh1@jklu.edu.in',
+'rajesh.guard@jklu.edu.in',
 'Night Shift',
 hostel_id,
 18000.00
 FROM hostel
-WHERE hostel_code = 'GH1';
+WHERE hostel_code = 'BH1';
 
 SELECT 'JKLU Hostel Management Database initialized with 4 Hostels (GH1, GH2, BH1, BH2) and Register Tables!' AS status;
 -- =====================================================================
