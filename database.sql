@@ -643,6 +643,10 @@ SELECT c.complaint_id, s.name AS student_name,
 FROM Complaint c
 INNER JOIN Student s ON c.student_id = s.student_id
 LEFT JOIN Room r ON c.room_id = r.room_id
+<<<<<<< Updated upstream
 LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
 
 select * from attendance_register;
+=======
+LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
+>>>>>>> Stashed changes

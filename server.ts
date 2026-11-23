@@ -32,11 +32,12 @@ async function startServer() {
     });
   }
 
-  const server = http.createServer(app);
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`[Hostel Management System] Server running on http://0.0.0.0:${PORT}`);
-    console.log(`[Hostel Management System] REST APIs accessible at http://0.0.0.0:${PORT}/api/`);
-  });
+const server = http.createServer(app);
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Hostel Management System] Server running on http://localhost:${PORT}`);
+  console.log(`[Hostel Management System] REST APIs accessible at http://localhost:${PORT}/api/`);
+});
 }
 
 startServer().catch((err) => {
