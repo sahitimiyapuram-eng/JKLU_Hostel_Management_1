@@ -1,3 +1,4 @@
+
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { getPool, getMockState, getDatabaseStatus } from '../config/db.js';
@@ -17,6 +18,7 @@ export async function login(req: Request, res: Response): Promise<void> {
   try {
     if (dbStatus.isMySQL && getPool()) {
       const pool = getPool()!;
+
       // 1. Try Warden
       const [wardenRows]: any = await pool.query(
         'SELECT warden_id, name, email, phone, password_hash, role, assigned_hostel, office_location FROM warden WHERE LOWER(email) = ?',
@@ -26,6 +28,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       if (wardenRows.length > 0) {
         const warden = wardenRows[0];
         const isMatch = (warden.password_hash && await bcrypt.compare(password, warden.password_hash)) || password === 'warden123';
+
         if (!isMatch) {
           res.status(401).json({ success: false, message: 'Invalid credentials entered' });
           return;
@@ -40,6 +43,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         };
 
         const token = generateToken(user);
+
         res.json({
           success: true,
           message: `${warden.role} logged in successfully`,
@@ -52,10 +56,10 @@ export async function login(req: Request, res: Response): Promise<void> {
       // 2. Try Student (by email or roll number)
       const [studentRows]: any = await pool.query(
         `SELECT s.student_id, s.student_code, s.name, s.email, s.phone, s.password_hash, h.hostel_code
-         FROM Student s
-         LEFT JOIN Allocation a ON s.student_id = a.student_id AND a.status = 'Active'
-         LEFT JOIN Room r ON a.room_id = r.room_id
-         LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id
+         FROM student s
+         LEFT JOIN allocation a ON s.student_id = a.student_id AND a.status = 'Active'
+         LEFT JOIN room r ON a.room_id = r.room_id
+         LEFT JOIN hostel h ON r.hostel_id = h.hostel_id
          WHERE LOWER(s.email) = ? OR LOWER(s.student_code) = ?`,
         [normalizedIdentifier, normalizedIdentifier]
       );
@@ -63,6 +67,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       if (studentRows.length > 0) {
         const student = studentRows[0];
         const isMatch = (student.password_hash && await bcrypt.compare(password, student.password_hash)) || password === 'warden123';
+
         if (!isMatch) {
           res.status(401).json({ success: false, message: 'Invalid credentials entered' });
           return;
@@ -78,6 +83,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         };
 
         const token = generateToken(user);
+
         res.json({
           success: true,
           message: 'Student logged in successfully',
@@ -90,8 +96,8 @@ export async function login(req: Request, res: Response): Promise<void> {
       // 3. Try Security Guard / Staff
       const [staffRows]: any = await pool.query(
         `SELECT s.staff_id, s.name, s.email, s.role, h.hostel_code
-         FROM Staff s
-         LEFT JOIN Hostel h ON s.hostel_id = h.hostel_id
+         FROM staff s
+         LEFT JOIN hostel h ON s.hostel_id = h.hostel_id
          WHERE LOWER(s.email) = ? AND s.role = 'Security Guard'`,
         [normalizedIdentifier]
       );
@@ -99,6 +105,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       if (staffRows.length > 0) {
         const staff = staffRows[0];
         const isMatch = password === 'warden123';
+
         if (!isMatch) {
           res.status(401).json({ success: false, message: 'Invalid credentials entered' });
           return;
@@ -113,6 +120,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         };
 
         const token = generateToken(user);
+
         res.json({
           success: true,
           message: 'Security Guard logged in successfully',
@@ -133,8 +141,10 @@ export async function login(req: Request, res: Response): Promise<void> {
     const warden = mock.wardens.find(
       (w) => w.email.toLowerCase() === normalizedIdentifier
     );
+
     if (warden) {
       const isMatch = password === warden.plain_password || password === 'warden123';
+
       if (!isMatch) {
         res.status(401).json({ success: false, message: 'Invalid credentials entered' });
         return;
@@ -149,6 +159,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       };
 
       const token = generateToken(user);
+
       res.json({
         success: true,
         message: `${warden.role} logged in successfully`,
@@ -164,8 +175,10 @@ export async function login(req: Request, res: Response): Promise<void> {
         s.email.toLowerCase() === normalizedIdentifier ||
         (s.student_code && s.student_code.toLowerCase() === normalizedIdentifier)
     );
+
     if (student) {
       const isMatch = password === student.plain_password || password === 'warden123';
+
       if (!isMatch) {
         res.status(401).json({ success: false, message: 'Invalid credentials entered' });
         return;
@@ -181,6 +194,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       };
 
       const token = generateToken(user);
+
       res.json({
         success: true,
         message: 'Student logged in successfully',
@@ -194,8 +208,10 @@ export async function login(req: Request, res: Response): Promise<void> {
     const staff = mock.staff.find(
       (st) => st.email && st.email.toLowerCase() === normalizedIdentifier
     );
+
     if (staff && staff.role === 'Security Guard') {
       const isMatch = password === 'warden123';
+
       if (!isMatch) {
         res.status(401).json({ success: false, message: 'Invalid credentials entered' });
         return;
@@ -212,6 +228,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       };
 
       const token = generateToken(user);
+
       res.json({
         success: true,
         message: 'Security Guard logged in successfully',
@@ -233,5 +250,6 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response): 
     res.status(401).json({ success: false, message: 'Not authenticated' });
     return;
   }
+
   res.json({ success: true, user: req.user });
 }
