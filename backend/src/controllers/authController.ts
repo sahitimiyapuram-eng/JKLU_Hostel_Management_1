@@ -19,7 +19,7 @@ export async function login(req: Request, res: Response): Promise<void> {
       const pool = getPool()!;
       // 1. Try Warden
       const [wardenRows]: any = await pool.query(
-        'SELECT warden_id, name, email, phone, password_hash, role, assigned_hostel, office_location FROM Warden WHERE LOWER(email) = ?',
+        'SELECT warden_id, name, email, phone, password_hash, role, assigned_hostel, office_location FROM warden WHERE LOWER(email) = ?',
         [normalizedIdentifier]
       );
 
