@@ -12,6 +12,9 @@ export const dbConfig = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  ...(process.env.DB_SSL_CA
+    ? { ssl: { ca: process.env.DB_SSL_CA } }
+    : {}),
 };
 
 export type DatabaseMode = 'mysql' | 'in_memory_simulation';
