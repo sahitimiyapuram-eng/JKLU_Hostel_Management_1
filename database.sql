@@ -472,6 +472,21 @@ INSERT INTO Mess_Weekly_Menu (day_of_week, meal_type, menu_items, meal_timing, i
 ('Sunday', 'Evening Snacks', NULL, NULL, FALSE, NULL),
 ('Sunday', 'Dinner', NULL, NULL, FALSE, NULL);
 
+INSERT INTO staff
+(name, role, phone, email, shift_timing, hostel_id, salary)
+VALUES
+('Neelam', 'Security Guard', '9829012345',
+ 'guard.gh1@jklu.edu.in', 'Night Shift', 1, 18000.00),
+
+('Manju', 'Security Guard', '9829012346',
+ 'guard.gh2@jklu.edu.in', 'Evening Shift', 2, 18000.00),
+
+('Dinesh Kumar', 'Security Guard', '9829012347',
+ 'guard.bh1@jklu.edu.in', 'Night Shift', 3, 18000.00),
+
+('Kailash Chand', 'Security Guard', '9829012348',
+ 'guard.bh2@jklu.edu.in', 'Morning Shift', 4, 18000.00);
+
 SELECT 'JKLU Hostel Management Database initialized with 4 Hostels (GH1, GH2, BH1, BH2) and Register Tables!' AS status;
 -- =====================================================================
 -- SQL JOIN QUERIES
