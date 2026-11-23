@@ -21,13 +21,15 @@ export async function login(req: Request, res: Response): Promise<void> {
 
       // 1. Try Warden
       const [wardenRows]: any = await pool.query(
-        'SELECT warden_id, name, email, phone, password_hash, role, assigned_hostel, office_location FROM warden WHERE LOWER(email) = ?',
+        'SELECT warden_id, name, email, phone, password_hash, role, assigned_hostel, office_location FROM Warden WHERE LOWER(email) = ?',
         [normalizedIdentifier]
       );
 
       if (wardenRows.length > 0) {
         const warden = wardenRows[0];
-        const isMatch = (warden.password_hash && await bcrypt.compare(password, warden.password_hash)) || password === 'warden123';
+        const isMatch =
+          (warden.password_hash && await bcrypt.compare(password, warden.password_hash)) ||
+          password === 'warden123';
 
         if (!isMatch) {
           res.status(401).json({ success: false, message: 'Invalid credentials entered' });
@@ -66,7 +68,9 @@ export async function login(req: Request, res: Response): Promise<void> {
 
       if (studentRows.length > 0) {
         const student = studentRows[0];
-        const isMatch = (student.password_hash && await bcrypt.compare(password, student.password_hash)) || password === 'warden123';
+        const isMatch =
+          (student.password_hash && await bcrypt.compare(password, student.password_hash)) ||
+          password === 'warden123';
 
         if (!isMatch) {
           res.status(401).json({ success: false, message: 'Invalid credentials entered' });
@@ -217,7 +221,11 @@ export async function login(req: Request, res: Response): Promise<void> {
         return;
       }
 
-      const hostelCode = staff.hostel_id === 1 ? 'GH1' : staff.hostel_id === 2 ? 'GH2' : staff.hostel_id === 3 ? 'BH1' : staff.hostel_id === 4 ? 'BH2' : null;
+      const hostelCode =
+        staff.hostel_id === 1 ? 'GH1' :
+        staff.hostel_id === 2 ? 'GH2' :
+        staff.hostel_id === 3 ? 'BH1' :
+        staff.hostel_id === 4 ? 'BH2' : null;
 
       const user: AuthUser = {
         id: staff.staff_id,
@@ -245,7 +253,10 @@ export async function login(req: Request, res: Response): Promise<void> {
   }
 }
 
-export async function getCurrentUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+export async function getCurrentUser(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
   if (!req.user) {
     res.status(401).json({ success: false, message: 'Not authenticated' });
     return;
