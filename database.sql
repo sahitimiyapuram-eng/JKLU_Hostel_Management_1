@@ -473,3 +473,176 @@ INSERT INTO Mess_Weekly_Menu (day_of_week, meal_type, menu_items, meal_timing, i
 ('Sunday', 'Dinner', NULL, NULL, FALSE, NULL);
 
 SELECT 'JKLU Hostel Management Database initialized with 4 Hostels (GH1, GH2, BH1, BH2) and Register Tables!' AS status;
+-- =====================================================================
+-- SQL JOIN QUERIES
+-- =====================================================================
+
+-- =====================================================================
+-- SQL JOIN QUERIES
+-- =====================================================================
+
+-- 1. INNER JOIN: Students with their allocated rooms and hostels
+SELECT s.student_id, s.name, s.student_code,
+       h.hostel_name, r.room_number
+FROM Student s
+INNER JOIN Allocation a ON s.student_id = a.student_id
+INNER JOIN Room r ON a.room_id = r.room_id
+INNER JOIN Hostel h ON r.hostel_id = h.hostel_id;
+
+-- 2. LEFT JOIN: All students and their allocation details
+SELECT s.student_id, s.name, s.student_code,
+       r.room_number, h.hostel_name
+FROM Student s
+LEFT JOIN Allocation a ON s.student_id = a.student_id
+LEFT JOIN Room r ON a.room_id = r.room_id
+LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
+
+-- 3. RIGHT JOIN: All hostels and their assigned wardens
+SELECT h.hostel_name, h.hostel_code,
+       w.name AS warden_name, w.email
+FROM Warden w
+RIGHT JOIN Hostel h ON w.warden_id = h.warden_id;
+
+-- 4. INNER JOIN: Students and their fee payment details
+SELECT s.name, s.student_code,
+       f.amount_paid, f.due_amount,
+       f.payment_date, f.status
+FROM Student s
+INNER JOIN Fee_Payment f ON s.student_id = f.student_id;
+
+-- 5. INNER JOIN: Complaints with student and staff details
+SELECT c.complaint_id, s.name AS student_name,
+       c.category, c.title, c.status,
+       st.name AS assigned_staff
+FROM Complaint c
+INNER JOIN Student s ON c.student_id = s.student_id
+LEFT JOIN Staff st ON c.staff_id = st.staff_id;
+
+-- 6. INNER JOIN: Visitors and the students they are visiting
+SELECT v.full_name AS visitor_name,
+       s.name AS student_name,
+       h.hostel_name, vi.purpose,
+       vi.check_in, vi.check_out
+FROM Visit vi
+INNER JOIN Visitor v ON vi.visitor_id = v.visitor_id
+INNER JOIN Student s ON vi.student_id = s.student_id
+INNER JOIN Hostel h ON vi.hostel_id = h.hostel_id;
+
+-- 7. LEFT JOIN: All hostels and their staff members
+SELECT h.hostel_name, st.name AS staff_name,
+       st.role, st.phone
+FROM Hostel h
+LEFT JOIN Staff st ON h.hostel_id = st.hostel_id;
+
+-- 8. INNER JOIN: Students and their attendance records
+SELECT s.name, s.student_code,
+       ar.date, ar.status, ar.recorded_by
+FROM Student s
+INNER JOIN attendance_register ar
+ON s.student_id = ar.student_id;
+
+-- 9. INNER JOIN: Rooms with hostel details
+SELECT h.hostel_name, r.room_number,
+       r.floor_number, r.capacity,
+       r.current_occupancy, r.status
+FROM Hostel h
+INNER JOIN Room r ON h.hostel_id = r.hostel_id;
+
+-- 10. LEFT JOIN: All students and their complaints
+SELECT s.name, s.student_code,
+       c.complaint_id, c.category,
+       c.title, c.status
+FROM Student s
+LEFT JOIN Complaint c ON s.student_id = c.student_id;
+
+-- 11. INNER JOIN: Maintenance records with hostel details
+SELECT h.hostel_name, m.location_or_room,
+       m.issue_description, m.work_type,
+       m.completion_status, m.cost
+FROM Hostel h
+INNER JOIN maintenance_register m
+ON h.hostel_code = m.hostel_code;
+
+-- 12. INNER JOIN: Allocations with student, room and hostel details
+SELECT a.allocation_id, s.name AS student_name,
+       r.room_number, h.hostel_name,
+       a.start_date, a.status
+FROM Allocation a
+INNER JOIN Student s ON a.student_id = s.student_id
+INNER JOIN Room r ON a.room_id = r.room_id
+INNER JOIN Hostel h ON r.hostel_id = h.hostel_id;
+
+-- 13. INNER JOIN: Students with their out-pass records
+SELECT s.name, s.student_code,
+       o.destination, o.out_date,
+       o.expected_in_date, o.parent_consent_status
+FROM Student s
+INNER JOIN student_out_register o
+ON s.student_code = o.roll_no;
+
+-- 14. LEFT JOIN: All hostels and their cleaning records
+SELECT h.hostel_name, cr.floor_or_area,
+       cr.cleaner_name, cr.cleaning_date,
+       cr.inspection_status
+FROM Hostel h
+LEFT JOIN cleaning_register cr
+ON h.hostel_code = cr.hostel_code;
+
+-- 15. INNER JOIN: Students and their late-night entry records
+SELECT s.name, s.student_code,
+       l.entry_date, l.entry_time,
+       l.reason_for_late, l.guard_on_duty
+FROM Student s
+INNER JOIN late_night_entry l
+ON s.student_code = l.roll_no;
+
+-- 16. RIGHT JOIN: All students and their attendance records
+SELECT s.name, s.student_code,
+       ar.date, ar.status
+FROM Student s
+RIGHT JOIN attendance_register ar
+ON s.student_id = ar.student_id;
+
+-- 17. INNER JOIN: Hostels and their security handover records
+SELECT h.hostel_name, sh.handover_date,
+       sh.shift, sh.outgoing_guard,
+       sh.incoming_guard, sh.verified_by_warden
+FROM Hostel h
+INNER JOIN security_handover sh
+ON h.hostel_code = sh.hostel_code;
+
+-- 18. CROSS JOIN: All possible combinations of days and meal types
+SELECT d.day_of_week, m.meal_type
+FROM
+(SELECT 'Monday' AS day_of_week
+ UNION SELECT 'Tuesday'
+ UNION SELECT 'Wednesday'
+ UNION SELECT 'Thursday'
+ UNION SELECT 'Friday'
+ UNION SELECT 'Saturday'
+ UNION SELECT 'Sunday') d
+CROSS JOIN
+(SELECT 'Breakfast' AS meal_type
+ UNION SELECT 'Lunch'
+ UNION SELECT 'Evening Snacks'
+ UNION SELECT 'Dinner') m;
+
+-- 19. SELF JOIN: Compare students belonging to the same department
+SELECT s1.name AS student1,
+       s2.name AS student2,
+       s1.department
+FROM Student s1
+INNER JOIN Student s2
+ON s1.department = s2.department
+AND s1.student_id < s2.student_id;
+
+-- 20. INNER JOIN: Complaints with student, room and hostel details
+SELECT c.complaint_id, s.name AS student_name,
+       h.hostel_name, r.room_number,
+       c.category, c.priority, c.status
+FROM Complaint c
+INNER JOIN Student s ON c.student_id = s.student_id
+LEFT JOIN Room r ON c.room_id = r.room_id
+LEFT JOIN Hostel h ON r.hostel_id = h.hostel_id;
+
+select * from attendance_register;
